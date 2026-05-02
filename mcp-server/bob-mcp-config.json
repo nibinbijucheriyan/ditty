@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "risk-observability": {
+      "command": "go",
+      "args": ["run", "mcp_server.go"],
+      "cwd": "D:/intelligent-observability-agent/mcp-server",
+      "env": {
+        "MCP_PORT": "8080"
+      }
+    }
+  }
+}

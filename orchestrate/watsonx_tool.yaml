@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Risk Alert Receiver API
+  description: |
+    API endpoint for receiving risk alerts from the Go-based observability monitor.
+    This tool is designed to be imported into watsonx Orchestrate to create a custom
+    tool that processes performance and carbon monitoring alerts.
+  version: 1.0.0
+  contact:
+    name: Intelligent Observability Agent
+    email: support@example.com
+
+servers:
+  - url: https://your-watsonx-orchestrate-endpoint.com
+    description: watsonx Orchestrate endpoint (update with your actual endpoint)
+
+paths:
+  /api/risk-alert:
+    post:
+      summary: Receive Risk Alert
+      description: |
+        Receives a risk alert from the monitoring system containing information about
+        detected performance issues, memory leaks, inefficient algorithms, or high
+        carbon footprint operations.
+      operationId: receiveRiskAlert
+      tags:
+        - Risk Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskAlert'
+            examples:
+              highCPU:
+                summary: High CPU Cycles Alert
+                value:
+                  file: "src/api/handlers.go"
+                  function: "ProcessRequest"
+                  issue_type: "high_cpu_cycles"
+                  severity: "high"
+                  line_number: 145
+                  timestamp: "2026-05-02T03:00:00Z"
+                  message: "Detected inefficient loop consuming excessive CPU cycles"
+              memoryLeak:
+                summary: Memory Leak Alert
+                value:
+                  file: "src/database/query.go"
+                  function: "FetchUserData"
+                  issue_type: "memory_leak"
+                  severity: "critical"
+                  line_number: 89
+                  timestamp: "2026-05-02T03:00:00Z"
+                  message: "Potential memory leak detected in database connection pool"
+              carbonFootprint:
+                summary: High Carbon Footprint Alert
+                value:
+                  file: "src/services/carbon.go"
+                  function: "CalculateEmissions"
+                  issue_type: "high_carbon_footprint"
+                  severity: "high"
+                  line_number: 67
+                  timestamp: "2026-05-02T03:00:00Z"
+                  message: "High carbon emissions detected from inefficient compute operations"
+      responses:
+        '200':
+          description: Risk alert received and processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    RiskAlert:
+      type: object
+      required:
+        - file
+        - function
+        - issue_type
+        - severity
+        - line_number
+        - timestamp
+        - message
+      properties:
+        file:
+          type: string
+          description: The file path where the issue was detected
+          example: "src/api/handlers.go"
+        function:
+          type: string
+          description: The function name where the issue was detected
+          example: "ProcessRequest"
+        issue_type:
+          type: string
+          description: The type of issue detected
+          enum:
+            - high_cpu_cycles
+            - memory_leak
+            - inefficient_algorithm
+            - high_carbon_footprint
+            - blocking_io
+          example: "high_cpu_cycles"
+        severity:
+          type: string
+          description: The severity level of the issue
+          enum:
+            - critical
+            - high
+            - medium
+            - low
+          example: "high"
+        line_number:
+          type: integer
+          description: The line number where the issue was detected
+          minimum: 1
+          example: 145
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the alert was generated
+          example: "2026-05-02T03:00:00Z"
+        message:
+          type: string
+          description: Detailed description of the detected issue
+          example: "Detected inefficient loop consuming excessive CPU cycles"
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Risk alert received and forwarded to MCP server"
+        ticket_id:
+          type: string
+          description: Unique identifier for the created risk ticket
+          example: "RISK-2026-001"
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Invalid request payload"
+        error_code:
+          type: string
+          example: "INVALID_PAYLOAD"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+security:
+  - BearerAuth: []
+
+# Made with Bob
